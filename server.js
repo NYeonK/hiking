@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const { User } = require("./models/User");
+require('dotenv').config();
 
 
 //bodyParser을 통해 아래와 같은 데이터 형식들을 분석해서 가져옴.
@@ -14,7 +15,7 @@ app.use(bodyParser.json());
 
 //mongodb 연결
 const mongoose = require('mongoose')
-mongoose.connect('mongodb+srv://nayeon:qweasdzxc123@cluster0.gzwsj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
+mongoose.connect(process.env.MONGODB_URI, {
   //useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false
 }).then(() => console.log('MongoDB Connected...'))
   .catch(err => console.log(err))
