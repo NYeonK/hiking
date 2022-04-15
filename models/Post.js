@@ -8,7 +8,7 @@ const postSchema = new Schema(
     {
         writer:{
             type:ObjectId,
-            //required:true,
+            required:true,
             ref:"User"
         },
         title:{
