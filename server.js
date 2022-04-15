@@ -1,11 +1,20 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+//const cors = require("cors");
 
 const { User } = require("./models/User");
 const Post = require("./models/Post");
 require('dotenv').config();
 
+/*
+const corsOptions = {
+  origin: true,
+  credentials: true
+};
+
+app.use(cors(corsOptions));
+*/
 
 //bodyParser을 통해 아래와 같은 데이터 형식들을 분석해서 가져옴.
 //application/x-www-form-urlencoded
@@ -43,9 +52,6 @@ app.post('/register', (req, res) => {
     const user = new User(req.body)
     console.log(req.body)
 
-    
-
-
     user.save((err, userInfo) => {
       if (err) return res.json({ success: false, err })
       console.log(userInfo)
@@ -57,45 +63,5 @@ app.post('/register', (req, res) => {
 })
 
 //////////////////////////////////////////////////////////////
-//게시판 메인 접근 시
-app.get('/community', (req, res) => {
-  //data는 최종적으로 db에서 가져와야함
-  let data = [
-    {
-      name: "이름1", title: "제목1", content: "내용1"
-    },
-    {
-      name: "이름2", title: "제목2", content: "내용2"
-    }
-  ]
-  res.send(data);
-})
+app.use("/community", require("./routes/communityRouter"));
 
-//게시판 글 작성 시 db에 저장
-app.post('/community/post', async (req, res) => {
-  console.log("inside post function");
-   
-  const data = new Post({
-    name:req.body.name,
-    title:req.body.email,
-    content:req.body.content,
-    count:1
-  });
-
-  const val = await data.save();
-  res.send("posted");
-
-})
-
-///검색 시 word로 검색한 단어 받음
-app.get('/community/:word', (req, res) => {
-  let {
-    word
-  } = req.params;
-
-  //디비에서 해당하는 word 셀렉하기
-  let data;
-  //let data = db.community.find()
-  console.log(word);
-  res.send(data);
-})

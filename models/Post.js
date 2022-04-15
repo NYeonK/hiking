@@ -1,19 +1,24 @@
 const mongoose = require('mongoose');
 
-const postSchema = mongoose.Schema(
+const { Schema } = mongoose;
+const {
+    Types: {ObjectId}
+} = Schema;
+const postSchema = new Schema(
     {
-        name:{
-            type:String,
+        writer:{
+            type:ObjectId,
             //required:true,
+            ref:"User"
         },
         title:{
             type:String,
             maxlength: 100,
-            //required:true,
+            required:true,
         },
         content:{
             type:String,
-            //required:true
+            required:true
         },
         count:Number,
     },
