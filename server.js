@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 //const cors = require("cors");
 
 const { User } = require("./models/User");
@@ -22,7 +23,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 //application/json
 app.use(bodyParser.json());
-
+app.use(cookieParser());
 
 //mongodb 연결
 const mongoose = require('mongoose')
@@ -48,7 +49,8 @@ app.get('/map', function(req, res){
 
 
 app.post('/register', (req, res) => {
-  // 회원 가입 할 때 필요한 정보들을 client에서 가져오면 DB에 넣어줌.
+
+  //회원 가입 할 때 필요한 정보들을 client에서 가져오면 DB에 넣어줌.
     const user = new User(req.body)
     console.log(req.body)
 
@@ -75,7 +77,7 @@ app.post('/login', (req, res) => {
     }
 
     //요청된 email이 DB에 있으면, password가 동일한지 확인
-    user.comparePassword(res.body.password, (err, isMatch) => {
+    user.comparePassword(req.body.password, (err, isMatch) => {
 
       if(!isMatch) {
         return res.json({ loginSuccess: false, message: "비밀번호가 틀렸습니다."})
@@ -83,9 +85,12 @@ app.post('/login', (req, res) => {
 
       //password가 동일하다면, token 생성
       user.generateToken((err, user) => {
-        
-      })
+        if (err) return res.status(400).send(err);
 
+        //token 저장
+        res.cookie("x_auth", user.token).status(200).json({ loginSuccess: true, userId: user._id }) 
+
+      })
     })
   })
 })
