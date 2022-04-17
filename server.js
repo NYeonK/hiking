@@ -3,7 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 //const cors = require("cors");
-
+const { auth } = require('./middleware/auth');
 const { User } = require("./models/User");
 const Post = require("./models/Post");
 require('dotenv').config();
@@ -48,7 +48,7 @@ app.get('/map', function(req, res){
 });
 
 
-app.post('/register', (req, res) => {
+app.post('/api/users/register', (req, res) => {
 
   //회원 가입 할 때 필요한 정보들을 client에서 가져오면 DB에 넣어줌.
     const user = new User(req.body)
@@ -64,7 +64,7 @@ app.post('/register', (req, res) => {
     })
 })
 
-app.post('/login', (req, res) => {
+app.post('/api/users/login', (req, res) => {
 
   //요청된 email을 DB에서 확인
   User.findOne({ email: req.body.email }, (err, user) => {
@@ -72,7 +72,7 @@ app.post('/login', (req, res) => {
     if(!user) {
       return res.json({
         loginSuccess: false,
-        message: "제공된 이메일에 해당하는 유저가 없습니다."
+        message: "가입된 이메일이 아닙니다."
       })
     }
 
@@ -92,6 +92,22 @@ app.post('/login', (req, res) => {
 
       })
     })
+  })
+})
+
+
+app.get('api/users/auth', auth, (req, res) => {
+
+  //여기까지 middleware를 통과했으면, Authentication = True
+  res.status(200).json({
+    _id: req.user._id,
+    isAdmin: req.user.role === 0 ? false : true,
+    isAuth: true,
+    email: req.user.email,
+    name: req.user.name,
+    lastname: req.user.lastname,
+    role: req.user.role,
+    image: req.user.image
   })
 })
 
