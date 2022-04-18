@@ -34,7 +34,7 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-
+app.use("/api/post", require("./routes/postRouter"));
+app.use("/api/reply", require("./routes/replyRouter"));
 app.use("/api/users", require("./routes/usersRouter"));
-app.use("/community", require("./routes/communityRouter"));
 
