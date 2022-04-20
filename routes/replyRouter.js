@@ -54,7 +54,7 @@ router.post("/update", async (req, res) => {
 });
 
 //내가 쓴 댓글
-router.get("/history", async (req, res) => {
+router.post("/history", async (req, res) => {
     try {
         const reply = await Reply.find({ writer: req.body.writer }, null, {sort: {createdAt: -1}});
         res.json({ list: reply });

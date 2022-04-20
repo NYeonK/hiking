@@ -80,8 +80,8 @@ router.get("/detail", async (req, res) => {
     }
 });
 
-//내가 쓴 글 /api/post/history?id
-router.get("/history", async (req, res) => {
+//내가 쓴 글 /api/post/history
+router.post("/history", async (req, res) => {
     try {
         const post = await Post.find({ writer: req.body.writer }, null, {sort: {createdAt: -1}});
         res.json({ list: post });
