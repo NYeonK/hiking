@@ -68,6 +68,19 @@ router.get("/main", async (req, res) => {
     }
 });
 
+//게시글 검색 /api/post/main/:
+router.get("/main/:search", async (req, res) => {
+    try {
+        const _search = req.params.search;
+        console.log(_search);
+        const post = await Post.find({ title: new RegExp(_search, 'i')}, null, {sort: {createdAt: -1}});
+        res.json({ list: post });
+    } catch (err) {
+        console.log(err);
+        res.json({ message: false });
+    }
+})
+
 //글 자세히 보기 /api/post/detail
 router.get("/detail", async (req, res) => {
     try {
