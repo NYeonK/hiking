@@ -1,16 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const Reply = require("../models/Reply");
+const Review = require("../models/Review");
 const bodyParser = require('body-parser');
 
 router.use(bodyParser.json());
 
- 
 
-//댓글 삭제 - /community/post/delete
+//후기 삭제 - /api/review/delete
 router.post("/delete", async (req, res) => {
     try {
-        await Reply.remove({
+        await Review.remove({
             _id: req.body._id
         });
         res.json({ message: true });
@@ -20,44 +19,51 @@ router.post("/delete", async (req, res) => {
     }
 });
 
-//댓글 작성 - /community/write
+//후기 작성 - /api/review/write
 router.post('/write', async (req, res) => {
     try {
+        //리뷰 find 해서 개수 +1 할까?
         const obg = {
             writer: req.body.writer,
-            postID: req.body.postID,
-            content: req.body.content
+            mountain: req.body.mountain,
+            address: req.body.address,
+            facility: req.body.facility,
+            rating: req.body.rating,
+            comment: req.body.comment,
+            visited: req.body.visited
         };
-        const reply = new Reply(obg);
-        await reply.save();
-        res.json({ message: "댓글이 업로드 되었습니다!" });
+        const review = new Review(obg);
+        await review.save();
+        res.json({ message: "후기가 업로드 되었습니다!" });
     } catch (err) {
         console.log(err);
         res.json({ message: false });
     }
 });
 
-//글 수정
+//후기 수정 - 
 router.post("/update", async (req, res) => {
     try {
-        await Reply.update(
+        await Review.update(
             {_id: req.body._id},
             {$set: {
-                content: req.body.content
+                facility: req.body.facility,
+                rating: req.body.rating,
+                comment: req.body.comment
             }}
         );
-        res.json({ message: "댓글이 수정 되었습니다!" });
+        res.json({ message: "후기가 수정 되었습니다!" });
     } catch (err) {
         console.log(err);
         res.json({ message: false });
     }
 });
 
-//내가 쓴 댓글
+//내가 쓴 후기
 router.post("/history", async (req, res) => {
     try {
-        const reply = await Reply.find({ writer: req.body.writer }, null, {sort: {createdAt: -1}});
-        res.json({ list: reply });
+        const review = await Review.find({ writer: req.body.writer }, null, {sort: {createdAt: -1}});
+        res.json({ list: review });
     } catch (err) {
         console.log(err);
         res.json({ message: false });

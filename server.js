@@ -1,8 +1,6 @@
 const express = require('express');
 const app = express();
-const { auth } = require('./middleware/auth');
-const { User } = require("./models/User");
-const Post = require("./models/Post");
+
 require('dotenv').config();
 
 //const cors = require("cors");
@@ -37,4 +35,6 @@ app.get('/', function(req, res){
 app.use("/api/post", require("./routes/postRouter"));
 app.use("/api/reply", require("./routes/replyRouter"));
 app.use("/api/users", require("./routes/usersRouter"));
+app.use("/api/review", require("./routes/reviewRouter"));
+
 
