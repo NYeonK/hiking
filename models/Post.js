@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const sequence = require('./Sequence');
 
 const { Schema } = mongoose;
 const {
@@ -26,5 +27,25 @@ const postSchema = new Schema(
         timestamps:true
     }
 );
+
+postSchema.pre("save", function (next) {
+    let doc = this;
+    sequence.getSequenceNextValue("post_count").
+    then(counter => {
+        console.log(counter);
+        if(!counter) {
+            sequence.insertCounter("post_count")
+            .then(counter => {
+                doc.count = counter;
+                console.log(doc)
+                next();
+            })
+            .catch(err => next(err))
+        } else {
+            doc.count = counter;
+            next();
+        }
+    })
+})
 
 module.exports = mongoose.model('Post', postSchema);

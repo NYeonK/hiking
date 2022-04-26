@@ -84,8 +84,9 @@ router.get("/main/:search", async (req, res) => {
 //글 자세히 보기 /api/post/detail
 router.get("/detail", async (req, res) => {
     try {
-        const id = req.params.id;
+        const id = req.body._id;
         const post = await Post.find({ _id: id });
+        //댓글도 추가해야함
         res.json({ post });
     } catch (err) {
         console.log(err);
