@@ -90,8 +90,9 @@ router.get("/detail", async (req, res) => {
             {'$inc': {'views': 1}
         })
         const post = await Post.find({ _id: id });
-        //댓글도 추가해야함
-        res.json({ post });
+        const reply = await Reply.find({ postID: id });
+
+        res.json({ post, reply });
     } catch (err) {
         console.log(err);
         res.json({ message: false });
