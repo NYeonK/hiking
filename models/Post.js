@@ -21,7 +21,13 @@ const postSchema = new Schema(
             type:String,
             required:true
         },
-        count:Number,
+        count:{
+            type:Number,
+        },
+        views:{
+            type:Number,
+            default: 0
+        }
     },
     {
         timestamps:true

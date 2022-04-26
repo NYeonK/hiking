@@ -85,6 +85,10 @@ router.get("/main/:search", async (req, res) => {
 router.get("/detail", async (req, res) => {
     try {
         const id = req.body._id;
+        await Post.update(
+            { _id: id }, 
+            {'$inc': {'views': 1}
+        })
         const post = await Post.find({ _id: id });
         //댓글도 추가해야함
         res.json({ post });
