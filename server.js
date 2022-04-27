@@ -36,5 +36,7 @@ app.use("/api/post", require("./routes/postRouter"));
 app.use("/api/reply", require("./routes/replyRouter"));
 app.use("/api/users", require("./routes/usersRouter"));
 app.use("/api/review", require("./routes/reviewRouter"));
+app.use("/api/users", require("./routes/findRouter"));
+
 
 
