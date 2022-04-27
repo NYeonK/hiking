@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const express = require("express");
 const router = express.Router();
 const { User } = require("../models/User");
@@ -73,10 +74,10 @@ router.post('/findPassword', (req, res) => {
         message: "가입된 이메일이 아닙니다."
       })
     }
-
-    user1 = new User(req.password)
+/*
+    req.password = new User(password)
     //console.log(req.body)
-    console.log(user1)
+    console.log(req.password)
     user.save((err, userInfo) => {
       if (err) return res.json({ success: false, err })
       console.log(userInfo)
@@ -85,30 +86,8 @@ router.post('/findPassword', (req, res) => {
         success: true
       })
     })
-
-/*
-    //요청된 email이 DB에 있으면, name이 동일한지 확인
-    user.compareName(req.body.name, (err, isMatch) => {
-
-      if(!isMatch) {
-        return res.json({ loginSuccess: false, message: "가입된 사용자가 아닙니다."})
-      }
-
-      //name과 email이 동일하다면, 비밀번호 변경
-      const user = new User(req.password)
-        console.log(req.body)
-
-        user.save((err, userInfo) => {
-          if (err) return res.json({ success: false, err })
-          console.log(userInfo)
-        
-          return res.status(200).json({
-            success: true
-          })
-        })
-
-    })*/
-
+*/
+    
   })
 })
 
