@@ -7,7 +7,7 @@ router.use(bodyParser.json());
 
  
 
-//댓글 삭제 - /community/post/delete
+//댓글 삭제 - /api/reply/delete
 router.post("/delete", async (req, res) => {
     try {
         await Reply.remove({
@@ -20,7 +20,7 @@ router.post("/delete", async (req, res) => {
     }
 });
 
-//댓글 작성 - /community/write
+//댓글 작성 - /api/reply/write
 router.post('/write', async (req, res) => {
     try {
         const obg = {
@@ -40,6 +40,7 @@ router.post('/write', async (req, res) => {
 //글 수정
 router.post("/update", async (req, res) => {
     try {
+        if((req.body?._id === undefined || req.body.content === undefined)) throw error;
         await Reply.update(
             {_id: req.body._id},
             {$set: {
@@ -63,4 +64,5 @@ router.post("/history", async (req, res) => {
         res.json({ message: false });
     }
 })
+
 module.exports = router;
