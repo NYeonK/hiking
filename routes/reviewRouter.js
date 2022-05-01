@@ -3,6 +3,7 @@ const router = express.Router();
 const Review = require("../models/Review");
 const bodyParser = require('body-parser');
 
+
 router.use(bodyParser.json());
 
 
@@ -32,9 +33,18 @@ router.post('/write', async (req, res) => {
             comment: req.body.comment,
             visited: req.body.visited
         };
+        // 해시태그 작성
+        const hashtags = req.body.comment.match(/#[^\s]*/g);
+        if(hashtags) {
+            const result = await Promise.all(hashtags.map(tag => Hashtag.findOrCreate({
+                where : { title : tag.slice(1).toLowerCase() },
+            })));
+            await post.addHashtags(result.map(r => r[0]));
+        }
+        //
         const review = new Review(obg);
         await review.save();
-        res.json({ message: "후기가 업로드 되었습니다!" });
+        res.json({ message: "후기가 업로드 되었습니다!" , comment: 'req.body.comment'});
     } catch (err) {
         console.log(err);
         res.json({ message: false });
