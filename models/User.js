@@ -1,8 +1,15 @@
 const mongoose = require('mongoose');
+
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+
+
 const bcrypt = require('bcrypt');
 const saltRounds = 10
 const jwt = require('jsonwebtoken');
 const { JsonWebTokenError } = require('jsonwebtoken');
+
+
 
 const userSchema = mongoose.Schema({
   name: {
@@ -32,7 +39,9 @@ const userSchema = mongoose.Schema({
   },
   tokenExp: {
     type: Number
-  }
+  },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date
 })
 
 userSchema.pre('save', function( next ){
@@ -65,6 +74,34 @@ userSchema.methods.comparePassword = function(plainPassword, cb) {
   })
 }
 
+// 이메일 및 암호 설정
+passport.use(new LocalStrategy(function(email, password, done) {
+  User.findOne({ email: email }, function(err, user) {
+    if (err) return done(err);
+    if (!user) return done(null, false, { message: 'Incorrect email.' });
+    user.comparePassword(password, function(err, isMatch) {
+      if (isMatch) {
+        return done(null, user);
+      } else {
+        return done(null, false, { message: 'Incorrect password.' });
+      }
+    });
+  });
+}));
+
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
+
+
+
 userSchema.methods.generateToken = function(cb) {
 
   var user = this;
@@ -95,6 +132,7 @@ userSchema.statics.findByToken = function(token, cb){
     })
   })
 }
+
 
 const User = mongoose.model('User', userSchema)
 

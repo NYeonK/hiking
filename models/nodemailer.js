@@ -41,4 +41,7 @@ module.exports = {
             }
         });
     }
-  }
+}
+
+
+module.exports = { nodemailer }

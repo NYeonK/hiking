@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { mail } = require("../models/nodemailer");
-const nodemailer = require("nodemailer");
+
+/*
+
+//const { mail } = require("../models/nodemailer");
+//const nodemailer = require("nodemailer");
+const { nodemailer } = require("../models/nodemailer");
 
 router.post('/mail', (req, res) => {
 
@@ -75,5 +79,5 @@ router.post('/mail', (req, res) => {
       }
 }
 })
-
+*/
 module.exports = router;
