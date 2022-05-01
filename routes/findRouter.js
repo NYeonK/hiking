@@ -59,10 +59,24 @@ router.post('/findPassword', (req, res) => {
 */
 
 router.get('/forgot', function(req, res) {
+  /*
   res.render('forgot', {
     user: req.user
+  });*/
+  //user = req.body.email 
+  
+  res.status(200).send({
+    user: req.user
   });
+/*
+  console.log(User);
+  return res.status(200).send({
+    user: process.env.NML_EMAIL,
+    success: true
+
+  });*/
 });
+
 
 router.post('/forgot', function(req, res, next) {
   async.waterfall([
@@ -76,7 +90,9 @@ router.post('/forgot', function(req, res, next) {
       User.findOne({ email: req.body.email }, function(err, user) {
         if (!user) {
           req.flash('error', 'No account with that email address exists.');
-          return res.redirect('/forgot');
+          //return res.redirect('/forgot');
+          console.log(1);
+          return res.json({ success: false, err });
         }
 
         user.resetPasswordToken = token;
@@ -88,14 +104,14 @@ router.post('/forgot', function(req, res, next) {
       });
     },
     function(token, user, done) {
-      var smtpTransport = nodemailer.createTransport({  //'SMTP',
+      let smtpTransport = nodemailer.createTransport({  //'SMTP',
         service: 'gmail',
         auth: {
           user: process.env.NML_EMAIL,
           pass: process.env.NML_PASSWORD
         }
       });
-      var mailOptions = {
+      let mailOptions = {
         to: user.email,
         from: process.env.NML_PASSWORD,
         subject: 'Node.js Password Reset',
@@ -111,7 +127,9 @@ router.post('/forgot', function(req, res, next) {
     }
   ], function(err) {
     if (err) return next(err);
-    res.redirect('/forgot');
+    console.log(2);
+    return res.json({ success: false, err })
+    //res.redirect('/forgot');
   });
 });
 
