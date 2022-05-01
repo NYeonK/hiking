@@ -22,8 +22,9 @@ router.post("/delete", async (req, res) => {
 
 //후기 작성 - /api/review/write
 router.post('/write', async (req, res) => {
-    try {
-        //리뷰 find 해서 개수 +1 할까?
+    try {        
+        const t = await Review.find({ writer: req.body.writer, mountain: req.body.mountain });
+        let _visited = t.length + 1;         //사용자가 해당 산에 작성한 리뷰개수 +1 
         const obg = {
             writer: req.body.writer,
             mountain: req.body.mountain,
@@ -31,7 +32,7 @@ router.post('/write', async (req, res) => {
             facility: req.body.facility,
             rating: req.body.rating,
             comment: req.body.comment,
-            visited: req.body.visited
+            visited: _visited
         };
         // 해시태그 작성
         const hashtags = req.body.comment.match(/#[^\s]*/g);

@@ -44,6 +44,7 @@ router.post('/write', async (req, res) => {
 //글 수정 - /api/post/update
 router.post("/update", async (req, res) => {
     try {
+        if((req.body?._id === undefined || req.body.content === undefined || req.body.title === undefined)) throw error;
         await Post.update(
             {_id: req.body._id},
             {$set: {
@@ -82,9 +83,12 @@ router.get("/main/:search", async (req, res) => {
 })
 
 //글 자세히 보기 /api/post/detail
-router.get("/detail", async (req, res) => {
+router.get("/detail/:count", async (req, res) => {
     try {
-        const id = req.body._id;
+        const _count = req.params.count;
+        const p = await Post.find({ count: _count });
+        console.log(p);
+        const id = p[0]['_id'];
         await Post.update(
             { _id: id }, 
             {'$inc': {'views': 1}
