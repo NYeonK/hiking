@@ -20,6 +20,7 @@ router.post("/delete", async (req, res) => {
 });
 
 //후기 작성 - /api/review/write
+//작성 시 산이 등록 돼 있지 않으면 산 등록 
 router.post('/write', async (req, res) => {
     try {        
         const t = await Review.find({ writer: req.body.writer, mountain: req.body.mountain });

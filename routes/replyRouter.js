@@ -37,7 +37,7 @@ router.post('/write', async (req, res) => {
     }
 });
 
-//글 수정
+//댓글 수정
 router.post("/update", async (req, res) => {
     try {
         if((req.body?._id === undefined || req.body.content === undefined)) throw error;
