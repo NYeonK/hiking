@@ -12,12 +12,9 @@ const reviewSchema = new Schema(
             ref:"User"
         },
         mountain:{
-            type:String,
-            required:true
-        },
-        address:{
-            type:String,
-            required:true
+            type:ObjectId,
+            required:true,
+            ref:"Mountain"
         },
         rating:{
             type:Number,
