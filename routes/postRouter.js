@@ -86,14 +86,13 @@ router.get("/main/:search", async (req, res) => {
 router.get("/detail/:count", async (req, res) => {
     try {
         const _count = req.params.count;
-        const p = await Post.find({ count: _count });
-        console.log(p);
-        const id = p[0]['_id'];
+        const post = await Post.findOne({ count: _count });
+        console.log(post);
+        const id = post['_id'];
         await Post.updateOne(
             { "_id": id }, 
             { '$inc': { 'views': 1}
         })
-        const post = await Post.find({ _id: id });
         const reply = await Reply.find({ postID: id });
 
         res.json({ post, reply });
