@@ -101,6 +101,21 @@ router.post('/write', async (req, res) => {
 //후기 수정 - 
 router.post("/update", async (req, res) => {
     try {
+        let v = await Review.findOne({ _id: req.body._id});
+        let m_id = v['mountain'];
+        let old_rate = v['rating'];
+        if(old_rate != req.body.rating) {
+            console.log("in");
+            let m = await Mountain.findOne({ _id: m_id });
+            let avg_rate = m['avgRating'];
+            let count = m['count'];
+            let new_rate = ((avg_rate * count) - old_rate + req.body.rating) / count;
+            console.log(avg_rate +", "+new_rate);
+            await Mountain.updateOne(
+                { "_id": m_id }, 
+                { $set: {"avgRating": new_rate }}
+            );
+        }
         await Review.update(
             {_id: req.body._id},
             {$set: {
