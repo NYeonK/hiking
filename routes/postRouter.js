@@ -45,11 +45,11 @@ router.post('/write', async (req, res) => {
 router.post("/update", async (req, res) => {
     try {
         if((req.body?._id === undefined || req.body.content === undefined || req.body.title === undefined)) throw error;
-        await Post.update(
-            {_id: req.body._id},
-            {$set: {
-                title: req.body.title,
-                content: req.body.content
+        await Post.updateOne(
+            { "_id": req.body._id},
+            { $set: {
+                "title": req.body.title,
+                "content": req.body.content
             }}
         );
         res.json({ message: "게시글이 수정 되었습니다!" });
@@ -89,9 +89,9 @@ router.get("/detail/:count", async (req, res) => {
         const p = await Post.find({ count: _count });
         console.log(p);
         const id = p[0]['_id'];
-        await Post.update(
-            { _id: id }, 
-            {'$inc': {'views': 1}
+        await Post.updateOne(
+            { "_id": id }, 
+            { '$inc': { 'views': 1}
         })
         const post = await Post.find({ _id: id });
         const reply = await Reply.find({ postID: id });

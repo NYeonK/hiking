@@ -59,15 +59,13 @@ router.post('/write', async (req, res) => {
             let count = m[0]['count'];
             let new_rate = ((a_rate * count) + req.body.rating) / (count + 1);
             
-            console.log(a_rate + ", " + req.body.rating + ", " + new_rate);
             //리뷰 평균별점, 리뷰 개수 업데이트
-            await Mountain.update(
-                { _id: m_id }, 
-                {'$inc': {'count': 1}, 
-                $set: { avgRating: new_rate }
+            await Mountain.updateOne(
+                { "_id": m_id }, 
+                { "$inc": { "count": 1 }, 
+                $set: { "avgRating": new_rate }
             })
         }
-        console.log(m_id);
 
         //리뷰 등록
         const t = await Review.find({ writer: req.body.writer, mountain: m_id });
@@ -105,23 +103,21 @@ router.post("/update", async (req, res) => {
         let m_id = v['mountain'];
         let old_rate = v['rating'];
         if(old_rate != req.body.rating) {
-            console.log("in");
             let m = await Mountain.findOne({ _id: m_id });
             let avg_rate = m['avgRating'];
             let count = m['count'];
             let new_rate = ((avg_rate * count) - old_rate + req.body.rating) / count;
-            console.log(avg_rate +", "+new_rate);
             await Mountain.updateOne(
                 { "_id": m_id }, 
                 { $set: {"avgRating": new_rate }}
             );
         }
-        await Review.update(
-            {_id: req.body._id},
-            {$set: {
-                facility: req.body.facility,
-                rating: req.body.rating,
-                comment: req.body.comment
+        await Review.updateOne(
+            { "_id": req.body._id},
+            { $set: {
+                "facility": req.body.facility,
+                "rating": req.body.rating,
+                "comment": req.body.comment
             }}
         );
         res.json({ message: "후기가 수정 되었습니다!" });
