@@ -16,13 +16,15 @@ router.post("/delete", async (req, res) => {
         const m = await Mountain.findOne({ _id: m_id });
         let a_rate = m['avgRating']; //해당 산 평균 별점
         let count = m['count'];
-        let new_rate = ((a_rate * count) - r_rate) / (count - 1)
+        let new_rate;
+        if(count < 2) new_rate = 0;
+        else new_rate = ((a_rate * count) - r_rate) / (count - 1);
         
         //리뷰 평균별점, 리뷰 개수 업데이트
         await Mountain.updateOne(
-            { _id: m_id }, 
+            { "_id": m_id }, 
             {'$inc': {'count': -1}, 
-                $set: { avgRating: new_rate } }
+                $set: { "avgRating": new_rate } }
         );
         await Review.remove({
             _id: req.body._id
@@ -35,7 +37,6 @@ router.post("/delete", async (req, res) => {
 });
 
 //후기 작성 - /api/review/write
-//작성 시 산이 등록 돼 있지 않으면 산 등록 
 router.post('/write', async (req, res) => {
     try {        
         const m = await Mountain.findOne({ name: req.body.mountain });
