@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const express = require("express");
 const router = express.Router();
 const { User } = require("../models/User");
+const { auth } = require("../middleware/auth");
 
 const nodemailer = require('nodemailer');
 const async = require('async');
@@ -64,16 +65,18 @@ router.get('/forgot', function(req, res) {
     user: req.user
   });*/
   
-  res.status(200).send({
-    user: req.user
-  });
-/*
-  console.log(User);
-  return res.status(200).send({
-    user: process.env.NML_EMAIL,
-    success: true
+  // res.status(200).send({
+  //   user: req.user
+  // });
 
-  });*/
+  User.findOne({email: req.body.email}, (err, user) => {
+    if (err) return res.json({ success: false, err });
+    return res.json({
+      user: req.user,
+      success: true,
+      user
+    })
+  })
 });
 
 
@@ -86,12 +89,12 @@ router.post('/forgot', function(req, res, next) {
       });
     },
     function(token, done) {
-      User.findOne({ email: req.body.email }, function(err, user) {
+      User.findOne({ name: req.body.name, email: req.body.email }, function(err, user) {
         if (!user) {
           req.flash('error', 'No account with that email address exists.');
-          //return res.redirect('/forgot');
           console.log(1);
-          return res.json({ success: false, err });
+          return res.redirect('forgot');
+          // return res.json({ success: false, err });
         }
 
         user.resetPasswordToken = token;
@@ -127,8 +130,8 @@ router.post('/forgot', function(req, res, next) {
   ], function(err) {
     if (err) return next(err);
     console.log(2);
-    // return res.json({ success: false, err })
-    return res.redirect('/forgot');
+    //return res.json({ success: false, user }) // err = null
+    return res.redirect('forgot');
   });
 });
 
@@ -138,7 +141,7 @@ router.get('/reset/:token', function(req, res) {
     if (!user) {
       req.flash('error', 'Password reset token is invalid or has expired.');
       // return res.json({ success: false, err })
-      return res.redirect('/forgot');
+      return res.redirect('forgot');
     }
     //res.render('reset', {
     //  user: req.user
@@ -155,8 +158,8 @@ router.post('/reset/:token', function(req, res) {
       User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
         if (!user) {
           req.flash('error', 'Password reset token is invalid or has expired.');
-          // return res.redirect('back');
-          return res.json({ success: false, err })
+          return res.redirect('back');
+          // return res.json({ success: false, err })
         }
 
         user.password = req.body.password;
@@ -191,7 +194,7 @@ router.post('/reset/:token', function(req, res) {
       });
     }
   ], function(err) {
-    res.redirect('/');
+    res.redirect('forgot');
   });
 });
 
