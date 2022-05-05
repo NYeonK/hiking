@@ -37,14 +37,14 @@ router.post('/write', async (req, res) => {
     }
 });
 
-//글 수정
+//댓글 수정
 router.post("/update", async (req, res) => {
     try {
         if((req.body?._id === undefined || req.body.content === undefined)) throw error;
-        await Reply.update(
-            {_id: req.body._id},
-            {$set: {
-                content: req.body.content
+        await Reply.updateOne(
+            { "_id": req.body._id},
+            { $set: {
+                "content": req.body.content
             }}
         );
         res.json({ message: "댓글이 수정 되었습니다!" });
