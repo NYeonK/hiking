@@ -11,7 +11,7 @@ const flash = require('express-flash');
 
 
 
-// 비밀번호 변경 - /api/users/findPassword
+
 /*
 router.post('/findPassword', (req, res) => {
 
@@ -59,6 +59,8 @@ router.post('/findPassword', (req, res) => {
 })
 */
 
+
+// 비밀번호 찾기 - /api/users/findPassword
 router.get('/forgot', function(req, res) {
   /*
   res.render('forgot', {
@@ -92,9 +94,7 @@ router.post('/forgot', function(req, res, next) {
       User.findOne({ name: req.body.name, email: req.body.email }, function(err, user) {
         if (!user) {
           req.flash('error', 'No account with that email address exists.');
-          console.log(1);
           return res.redirect('forgot');
-          // return res.json({ success: false, err });
         }
 
         user.resetPasswordToken = token;
@@ -106,7 +106,7 @@ router.post('/forgot', function(req, res, next) {
       });
     },
     function(token, user, done) {
-      let smtpTransport = nodemailer.createTransport({  //'SMTP',
+      let transport = nodemailer.createTransport({
         service: 'gmail',
         auth: {
           user: process.env.NML_EMAIL,
@@ -122,25 +122,23 @@ router.post('/forgot', function(req, res, next) {
           'http://' + req.headers.host + '/reset/' + token + '\n\n' +
           'If you did not request this, please ignore this email and your password will remain unchanged.\n'
       };
-      smtpTransport.sendMail(mailOptions, function(err) {
+      transport.sendMail(mailOptions, function(err) {
         req.flash('info', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
         done(err, 'done');
       });
     }
   ], function(err) {
     if (err) return next(err);
-    console.log(2);
-    //return res.json({ success: false, user }) // err = null
     return res.redirect('forgot');
   });
 });
 
 
+// 새로운 비밀번호로 변경 - /api/users/findPassword
 router.get('/reset/:token', function(req, res) {
   User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
     if (!user) {
       req.flash('error', 'Password reset token is invalid or has expired.');
-      // return res.json({ success: false, err })
       return res.redirect('forgot');
     }
     //res.render('reset', {
@@ -159,7 +157,6 @@ router.post('/reset/:token', function(req, res) {
         if (!user) {
           req.flash('error', 'Password reset token is invalid or has expired.');
           return res.redirect('back');
-          // return res.json({ success: false, err })
         }
 
         user.password = req.body.password;
@@ -174,7 +171,7 @@ router.post('/reset/:token', function(req, res) {
       });
     },
     function(user, done) {
-      let smtpTransport = nodemailer.createTransport({  // 'SMTP',
+      let transport = nodemailer.createTransport({
         service: 'gmail',
         auth: {
           user: process.env.NML_EMAIL,
@@ -188,7 +185,7 @@ router.post('/reset/:token', function(req, res) {
         text: 'Hello,\n\n' +
           'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
       };
-      smtpTransport.sendMail(mailOptions, function(err) {
+      transport.sendMail(mailOptions, function(err) {
         req.flash('success', 'Success! Your password has been changed.');
         done(err);
       });
