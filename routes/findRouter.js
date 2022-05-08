@@ -76,7 +76,6 @@ router.get('/forgot', function(req, res) {
     return res.json({
       user: req.user,
       success: true,
-      user
     })
   })
 });
@@ -116,11 +115,10 @@ router.post('/forgot', function(req, res, next) {
       let mailOptions = {
         to: user.email,
         from: process.env.NML_PASSWORD,
-        subject: 'Node.js Password Reset',
-        text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-          'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+        subject: '[燈山(등산)] 비밀번호 변경 확인 메일',
+        text: '안녕하세요, ' + user.name +'님!\n\n아래 링크를 클릭하여 새로운 비밀번호를 설정할 수 있습니다.\n\n'+
           'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-          'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+          '만약 燈山(등산)에서 비밀번호 요청을 하신적이 없다면 이 이메일을 무시하셔도 됩니다.\n\n링크를 클릭하여 새로운 비밀번호를 설정하기 전까지는 비밀번호가 변경되지 않습니다.\n\n감사합니다.\n'
       };
       transport.sendMail(mailOptions, function(err) {
         req.flash('info', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
@@ -181,9 +179,9 @@ router.post('/reset/:token', function(req, res) {
       let mailOptions = {
         to: user.email,
         from: 'passwordreset@demo.com',
-        subject: 'Your password has been changed',
-        text: 'Hello,\n\n' +
-          'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
+        subject: '[燈山(등산)] 비밀번호 변경 완료',
+        text: '안녕하세요, ' + user.name +'님!\n\n' +
+          user.email + ' 계정의 비밀번호가 변경되었음을 알려드립니다.\n\n감사합니다.\n'
       };
       transport.sendMail(mailOptions, function(err) {
         req.flash('success', 'Success! Your password has been changed.');

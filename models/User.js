@@ -36,7 +36,7 @@ const userSchema = mongoose.Schema({
   image: String,
   level: {
     type: Number,
-    default: 0
+    default: 1
   },
   token: {
     type: String
