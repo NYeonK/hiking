@@ -3,10 +3,21 @@ const router = express.Router();
 const Post = require("../models/Post");
 const Reply = require("../models/Reply");
 const bodyParser = require('body-parser');
+const multer = require('multer');
 
 router.use(bodyParser.json());
-
  
+//uploads/images 에 이미지 저장하도록 함 
+const Storage = multer.diskStorage({
+    destination: './uploads/images',
+    filename:(req, file, cb) => {
+        cb(null, file.originalname);
+    },
+});
+
+const upload = multer({
+    storage: Storage,
+});
 
 //게시글 삭제 - /api/post/delete
 router.post("/delete", async (req, res) => {
@@ -25,12 +36,13 @@ router.post("/delete", async (req, res) => {
 });
 
 //글 작성 - /api/post/write
-router.post('/write', async (req, res) => {
+router.post('/write', upload.single('image'), async (req, res) => {
     try {
         const obg = {
             writer: req.body.writer,
             title: req.body.title,
-            content: req.body.content
+            content: req.body.content,
+            image: req.file?.filename
         };
         const post = new Post(obg);
         await post.save();

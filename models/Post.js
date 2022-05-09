@@ -21,6 +21,7 @@ const postSchema = new Schema(
             type:String,
             required:true
         },
+        image:String,
         count:{
             type:Number,
         },
