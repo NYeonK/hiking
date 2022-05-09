@@ -28,6 +28,7 @@ const reviewSchema = new Schema(
             type:String,
             required:true
         },
+        hashtags:[{ type: String }],
         visited:Number,
     },
     {
