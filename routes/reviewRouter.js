@@ -48,6 +48,7 @@ router.post('/write', async (req, res) => {
                 address: req.body.address,
                 avgRating: req.body.rating,
                 count: 1,
+                hashtags: req.body.hashtags,
                 latitude: req.body.lat,
                 longitude: req.body.lng
             }
@@ -77,9 +78,10 @@ router.post('/write', async (req, res) => {
             facility: req.body.facility,
             rating: req.body.rating,
             comment: req.body.comment,
-            hashtags: hashtags.split(",").map((word) => `#${word}`),
+            hashtags: req.body.toString().split(",").map((word) => `#${word}`),
             visited: _visited
         };
+
         // 해시태그 작성
         
         // const hashtags = req.body.comment.match(/#[^\s]*/g);
@@ -89,7 +91,7 @@ router.post('/write', async (req, res) => {
         //     })));
         //     await post.addHashtags(result.map(r => r[0]));
         // }
-
+        
         const review = new Review(obg);
         await review.save();
         res.json({ message: "후기가 업로드 되었습니다!" , comment: req.body.comment});

@@ -18,6 +18,7 @@ const mountainSchema = new Schema(
         count:{
             type:Number,
         },
+        hashtags: [{ type: String }],
         latitude:{
             type:Number,
             required:true
