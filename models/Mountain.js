@@ -15,6 +15,10 @@ const mountainSchema = new Schema(
         avgRating:{
             type:Number
         },
+        facility: [{ 
+            t:Number, 
+            f:Number 
+        }],
         count:{
             type:Number,
         },

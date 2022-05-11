@@ -12,10 +12,16 @@ router.post("/delete", async (req, res) => {
         const v = await Review.findOne({ _id: req.body._id });
         let r_rate = v['rating'];    //작성한 별점
         let m_id = v['mountain'];
+        let r_fac = v['facility'];
 
         const m = await Mountain.findOne({ _id: m_id });
         let a_rate = m['avgRating']; //해당 산 평균 별점
         let count = m['count'];
+        let fac = m['facility'];
+        for(let i = 0; i < 5; i++) {
+            if(r_fac[i]) fac[i].t -= 1;
+            else fac[i].f -= 1;
+        }
         let new_rate;
         if(count < 2) new_rate = 0;
         else new_rate = ((a_rate * count) - r_rate) / (count - 1);
@@ -24,7 +30,7 @@ router.post("/delete", async (req, res) => {
         await Mountain.updateOne(
             { "_id": m_id }, 
             {'$inc': {'count': -1}, 
-                $set: { "avgRating": new_rate } }
+                $set: { "avgRating": new_rate, "facility": fac } }
         );
         await Review.remove({
             _id: req.body._id
@@ -42,11 +48,18 @@ router.post('/write', async (req, res) => {
         const m = await Mountain.findOne({ name: req.body.mountain });
         let m_id;
         console.log(m);
+        
         if(m === null) { //산이 등록 돼 있지 않으므로 산 등록
+            let fac = [];
+            for(let i = 0; i < 5; i++) {
+                if(req.body.facility[i]) fac.push({ t: 1, f: 0 });
+                else fac.push({ t: 0, f: 1 });;
+            }
             const object = {
                 name: req.body.mountain,
                 address: req.body.address,
                 avgRating: req.body.rating,
+                facility: fac,
                 count: 1,
                 hashtags: req.body.toString().split(",").map((word) => `#${word}`),
                 latitude: req.body.lat,
@@ -59,13 +72,17 @@ router.post('/write', async (req, res) => {
             m_id = m['_id'];
             let a_rate = m['avgRating'];
             let count = m['count'];
+            let fac = m['facility'];
             let new_rate = ((a_rate * count) + req.body.rating) / (count + 1);
-            
+            for(let i = 0; i < 5; i++) {
+                if(req.body.facility[i]) fac[i].t += 1;
+                else fac[i].f += 1;
+            }
             //리뷰 평균별점, 리뷰 개수 업데이트
             await Mountain.updateOne(
                 { "_id": m_id }, 
                 { "$inc": { "count": 1 }, 
-                    $set: { "avgRating": new_rate } }
+                    $set: { "avgRating": new_rate, "facility": fac } }
             )
         }
 
@@ -107,14 +124,35 @@ router.post("/update", async (req, res) => {
         let v = await Review.findOne({ _id: req.body._id});
         let m_id = v['mountain'];
         let old_rate = v['rating'];
-        if(old_rate != req.body.rating) {
+        let o_fac = v['facility'];
+        let flag = false;
+        for(let i = 0; i < 5; i++) {
+            if(o_fac[i] != req.body.facility[i]) {
+                flag = true;
+                break;
+            }
+        }
+        if(flag || old_rate != req.body.rating) {
             let m = await Mountain.findOne({ _id: m_id });
             let avg_rate = m['avgRating'];
             let count = m['count'];
+            let fac = m['facility'];
+            for(let i = 0; i < 5; i++) {
+                if(o_fac[i] != req.body.facility[i]) {
+                    if(req.body.facility[i]) {
+                        fac[i].t += 1;
+                        fac[i].f -= 1;
+                    }
+                    else {
+                        fac[i].f += 1;
+                        fac[i].t -= 1;
+                    }
+                }
+            }
             let new_rate = ((avg_rate * count) - old_rate + req.body.rating) / count;
             await Mountain.updateOne(
                 { "_id": m_id }, 
-                { $set: {"avgRating": new_rate } }
+                { $set: {"avgRating": new_rate, "facility": fac } }
             );
         }
         await Review.updateOne(
