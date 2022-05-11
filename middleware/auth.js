@@ -1,4 +1,4 @@
-const { User } = require("../models/User");
+const User = require("../models/User");
 
 let auth = (req, res, next) => {
 
@@ -18,4 +18,4 @@ let auth = (req, res, next) => {
   })
 }
 
-module.exports = { auth };
+module.exports = auth;
