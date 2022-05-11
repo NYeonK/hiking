@@ -48,7 +48,7 @@ router.post('/write', async (req, res) => {
                 address: req.body.address,
                 avgRating: req.body.rating,
                 count: 1,
-                hashtags: req.body.hashtags,
+                hashtags: req.body.toString().split(",").map((word) => `#${word}`),
                 latitude: req.body.lat,
                 longitude: req.body.lng
             }
