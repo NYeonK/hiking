@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../models/Post");
 const Reply = require("../models/Reply");
+const User = require("../models/User");
 const bodyParser = require('body-parser');
 const multer = require('multer');
 
@@ -74,8 +75,20 @@ router.post("/update", async (req, res) => {
 //게시글 목록 /api/post/main
 router.get("/main", async (req, res) => {
     try {
-        const post = await Post.find();
-        res.json({ list: post });
+        const posts = await Post.find(null, null, {sort: {createdAt: -1}});
+        let result = [];
+
+        for(let idx = 0; idx < posts.length; idx++){
+            let user = await User.findOne({ _id: posts[idx]['writer'] }, {_id:0, name:1, level:1});
+            let level = user['level'];
+            let name = user['name'];
+            result.push(posts[idx]['_doc']);
+            result[idx]['level'] = level;
+            result[idx]['name'] = name;
+            console.log(result[idx]);
+        }
+
+        res.json({ list: result });
     } catch (err) {
         res.json({ message: false });
     }
@@ -86,8 +99,20 @@ router.get("/main/:search", async (req, res) => {
     try {
         const _search = req.params.search;
         console.log(_search);
-        const post = await Post.find({ title: new RegExp(_search, 'i')}, null, {sort: {createdAt: -1}});
-        res.json({ list: post });
+        
+        const posts = await Post.find({ title: new RegExp(_search, 'i')}, null, {sort: {createdAt: -1}});
+        let result = [];
+
+        for(let idx = 0; idx < posts.length; idx++){
+            let user = await User.findOne({ _id: posts[idx]['writer'] }, {_id:0, name:1, level:1});
+            let level = user['level'];
+            let name = user['name'];
+            result.push(posts[idx]['_doc']);
+            result[idx]['level'] = level;
+            result[idx]['name'] = name;
+        }
+
+        res.json({ list: result });
     } catch (err) {
         console.log(err);
         res.json({ message: false });
@@ -100,14 +125,31 @@ router.get("/detail/:count", async (req, res) => {
         const _count = req.params.count;
         const post = await Post.findOne({ count: _count });
         console.log(post);
-        const id = post['_id'];
+
+        let user = await User.findOne({ _id: post['writer'] });
+        let level = user['level'];
+        let name = user['name'];
+        post['_doc']['level'] = level;
+        post['_doc']['name'] = name;
+        
         await Post.updateOne(
-            { "_id": id }, 
+            { "_id": post['_id'] }, 
             { '$inc': { 'views': 1}
         })
-        const reply = await Reply.find({ postID: id });
 
-        res.json({ post, reply });
+        const replies = await Reply.find({ postID: post['_id'] });
+        let result = [];
+
+        for(let idx = 0; idx < replies.length; idx++){
+            let user = await User.findOne({ _id: replies[idx]['writer'] }, {_id:0, name:1, level:1});
+            let level = user['level'];
+            let name = user['name'];
+            result.push(replies[idx]['_doc']);
+            result[idx]['level'] = level;
+            result[idx]['name'] = name;
+        }
+
+        res.json({ post, replies: result });
     } catch (err) {
         console.log(err);
         res.json({ message: false });
