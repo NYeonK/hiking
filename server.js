@@ -71,4 +71,5 @@ app.use("/api/reply", require("./routes/replyRouter"));
 app.use("/api/users", require("./routes/usersRouter"));
 app.use("/api/review", require("./routes/reviewRouter"));
 app.use("/api/map", require("./routes/mapRouter"));
+app.use("/api/mypage", require("./routes/mypageRouter"));
 app.use("/api/users", require("./routes/findRouter"));
