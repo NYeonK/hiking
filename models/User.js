@@ -34,6 +34,10 @@ const userSchema = mongoose.Schema({
     default: 0
   },
   image: String,
+  review:{
+    type: Number,
+    default: 0
+  },
   level: {
     type: Number,
     default: 1

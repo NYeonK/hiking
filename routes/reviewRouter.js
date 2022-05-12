@@ -3,12 +3,34 @@ const router = express.Router();
 const Review = require("../models/Review");
 const Mountain = require("../models/Mountain");
 const bodyParser = require('body-parser');
+const User = require("../models/User");
 
 router.use(bodyParser.json());
 
 //후기 삭제 - /api/review/delete
 router.post("/delete", async (req, res) => {
     try {
+        //레벨 확인
+        let u = await User.findOne({ _id: req.body.writer }, { _id: 0, review: 1 });
+        let n = u['review'] - 1;
+        let level = 1;
+        if(n < 4) level = 2;
+        else if(n < 7) level = 3;
+        else if(n < 10) level = 4;
+        else if(n < 15) level = 5;
+        else if(n < 20) level = 6;
+        else if(n < 25) level = 7;
+        else if(n < 32) level = 8;
+        else if(n < 39) level = 9;
+        else if(39 <= n) level = 10;
+        await User.updateOne(
+            { "_id": req.body.writer },
+            { $set: {
+                "level": level,
+                "review": n
+            }}
+        );
+        
         const v = await Review.findOne({ _id: req.body._id });
         let r_rate = v['rating'];    //작성한 별점
         let m_id = v['mountain'];
@@ -53,7 +75,7 @@ router.post('/write', async (req, res) => {
             let fac = [];
             for(let i = 0; i < 5; i++) {
                 if(req.body.facility[i]) fac.push({ t: 1, f: 0 });
-                else fac.push({ t: 0, f: 1 });;
+                else fac.push({ t: 0, f: 1 });
             }
             const object = {
                 name: req.body.mountain,
@@ -85,10 +107,30 @@ router.post('/write', async (req, res) => {
                     $set: { "avgRating": new_rate, "facility": fac } }
             )
         }
+        
+        //레벨 확인
+        let u = await User.findOne({ _id: req.body.writer }, { _id: 0, review: 1 });
+        let n = u['review'] + 1;
+        let level = 1;
+        if(n < 4) level = 2;
+        else if(n < 7) level = 3;
+        else if(n < 10) level = 4;
+        else if(n < 15) level = 5;
+        else if(n < 20) level = 6;
+        else if(n < 25) level = 7;
+        else if(n < 32) level = 8;
+        else if(n < 39) level = 9;
+        else if(39 <= n) level = 10;
+        await User.updateOne(
+            { "_id": req.body.writer },
+            { $set: {
+                "level": level,
+                "review": n
+            }}
+        );
 
         //리뷰 등록
-        const t = await Review.find({ writer: req.body.writer, mountain: m_id });
-        let _visited = t.length + 1;         //사용자가 해당 산에 작성한 리뷰개수 +1 
+        let _visited = await Review.find({ writer: req.body.writer, mountain: m_id }).count() + 1;
         const obg = {
             writer: req.body.writer,
             mountain: m_id,
