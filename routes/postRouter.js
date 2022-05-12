@@ -62,7 +62,8 @@ router.post("/update", async (req, res) => {
             { "_id": req.body._id},
             { $set: {
                 "title": req.body.title,
-                "content": req.body.content
+                "content": req.body.content,
+                "image" : req.body?.image
             }}
         );
         res.json({ message: "게시글이 수정 되었습니다!" });
