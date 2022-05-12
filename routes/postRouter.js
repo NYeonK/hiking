@@ -43,7 +43,7 @@ router.post('/write', upload.single('image'), async (req, res) => {
             writer: req.body.writer,
             title: req.body.title,
             content: req.body.content,
-            image: req.file?.filename
+            image: req.body?.image
         };
         const post = new Post(obg);
         await post.save();
