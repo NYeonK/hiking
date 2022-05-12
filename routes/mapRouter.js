@@ -27,7 +27,7 @@ router.get("/:mountain", async (req, res) => {
             result[idx]['image'] = image;
         }
 
-        res.json({ m, reviews: result });
+        res.json({ mountain: m, reviews: result });
     } catch (err) {
         console.log(err);
         res.json({ message: false });
