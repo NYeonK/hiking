@@ -202,7 +202,8 @@ router.post("/update", async (req, res) => {
             { $set: {
                 "facility": req.body.facility,
                 "rating": req.body.rating,
-                "comment": req.body.comment
+                "comment": req.body.comment,
+                "hashtag": req.body.toString().split(",").map((word) => `#${word}`),
             }}
         );
         res.json({ message: "후기가 수정 되었습니다!" });
