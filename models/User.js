@@ -52,6 +52,22 @@ const userSchema = mongoose.Schema({
   resetPasswordExpires: Date
 })
 
+//회원정보 업데이트 시 비밀번호 암호화
+userSchema.pre("updateOne", function(next) {
+  const password = this.getUpdate().$set.password;
+  if (!password) {
+      return next();
+  }
+  try {
+      const salt = bcrypt.genSaltSync();
+      const hash = bcrypt.hashSync(password, salt);
+      this.getUpdate().$set.password = hash;
+      next();
+  } catch (error) {
+      return next(error);
+  }
+});
+
 userSchema.pre('save', function( next ){
   var user = this;
 

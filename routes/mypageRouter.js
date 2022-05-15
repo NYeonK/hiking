@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 
 router.use(bodyParser.json());
 
+
 //방문한 산 불러오기 - /api/mypage/mountains
 router.post("/main", async (req, res) => {
     try {
@@ -24,6 +25,26 @@ router.post("/main", async (req, res) => {
         }
 
         res.json({ user, mountains: result });
+    } catch (err) {
+        console.log(err);
+        res.json({ message: false });
+    }
+});
+
+//회원 정보 수정 - /api/mypage/update
+router.post("/update", async (req, res) => {
+    try {
+        await User.updateOne(
+            { "_id": req.body._id},
+            { $set: {
+                "name": req.body.name,
+                "email": req.body.email,
+                "password" : req.body.password,
+                "image": req.body.image
+            }}
+        );
+
+        res.json({ message: true });
     } catch (err) {
         console.log(err);
         res.json({ message: false });
