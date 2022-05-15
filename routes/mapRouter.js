@@ -12,21 +12,21 @@ router.get("/:mountain", async (req, res) => {
     try {
         const _mountain = req.params.mountain;
         const m = await Mountain.findOne({ mountain: _mountain });
-
-        const reviews = await Review.find({ mountain: m['_id']});
         let result = [];
+        if(m !== null) { 
+            const reviews = await Review.find({ mountain: m['_id']});
 
-        for(let idx = 0; idx < reviews.length; idx++){
-            let user = await User.findOne({ _id: reviews[idx]['writer'] }, {_id:0, name:1, level:1, image:1});
-            let level = user['level'];
-            let name = user['name'];
-            let image = user['image'];
-            result.push(reviews[idx]['_doc']);
-            result[idx]['level'] = level;
-            result[idx]['name'] = name;
-            result[idx]['image'] = image;
-        }
-
+            for(let idx = 0; idx < reviews.length; idx++){
+                let user = await User.findOne({ _id: reviews[idx]['writer'] }, {_id:0, name:1, level:1, image:1});
+                let level = user['level'];
+                let name = user['name'];
+                let image = user['image'];
+                result.push(reviews[idx]['_doc']);
+                result[idx]['level'] = level;
+                result[idx]['name'] = name;
+                result[idx]['image'] = image;
+            }
+        } 
         res.json({ mountain: m, reviews: result });
     } catch (err) {
         console.log(err);

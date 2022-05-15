@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 
 
-//방문한 산 불러오기 - /api/mypage/mountains
+//방문한 산 불러오기 - /api/mypage/main
 router.post("/main", async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.body._id }, { _id: 0, image: 1, name: 1, level: 1, review: 1 });
@@ -17,11 +17,12 @@ router.post("/main", async (req, res) => {
         const reviews = await Review.distinct("mountain", { writer: req.body._id });
         console.log(reviews);
         let result = [];
-
-        for(let idx = 0; idx < reviews.length; idx++){
-            let mountain = await Mountain.findOne({ _id: reviews[idx] });
-            result.push(mountain);
-            console.log(result);
+        if(reviews !== null) {
+            for(let idx = 0; idx < reviews.length; idx++){
+                let mountain = await Mountain.findOne({ _id: reviews[idx] });
+                result.push(mountain);
+                console.log(result);
+            }
         }
 
         res.json({ user, mountains: result });
