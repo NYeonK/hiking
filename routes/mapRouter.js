@@ -7,11 +7,11 @@ const bodyParser = require('body-parser');
 
 router.use(bodyParser.json());
 
-//지도 검색 - /api/map/:search
+//지도 검색 - /api/map/:mountain
 router.get("/:mountain", async (req, res) => {
     try {
         const _mountain = req.params.mountain;
-        const m = await Mountain.findOne({ mountain: _mountain });
+        const m = await Mountain.findOne({ name: _mountain });
         let result = [];
         if(m !== null) { 
             const reviews = await Review.find({ mountain: m['_id']});
