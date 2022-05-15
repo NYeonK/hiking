@@ -79,16 +79,18 @@ router.get("/main", async (req, res) => {
         const posts = await Post.find(null, null, {sort: {createdAt: -1}});
         let result = [];
 
-        for(let idx = 0; idx < posts.length; idx++){
-            let user = await User.findOne({ _id: posts[idx]['writer'] }, {_id:0, name:1, level:1});
-            let level = user['level'];
-            let name = user['name'];
-            result.push(posts[idx]['_doc']);
-            result[idx]['level'] = level;
-            result[idx]['name'] = name;
-            console.log(result[idx]);
+        if(posts !== null) {
+            for(let idx = 0; idx < posts.length; idx++){
+                let user = await User.findOne({ _id: posts[idx]['writer'] }, {_id:0, name:1, level:1});
+                let level = user['level'];
+                let name = user['name'];
+                result.push(posts[idx]['_doc']);
+                result[idx]['level'] = level;
+                result[idx]['name'] = name;
+                console.log(result[idx]);
+            }    
         }
-
+        
         res.json({ list: result });
     } catch (err) {
         res.json({ message: false });
@@ -104,13 +106,15 @@ router.get("/main/:search", async (req, res) => {
         const posts = await Post.find({ title: new RegExp(_search, 'i')}, null, {sort: {createdAt: -1}});
         let result = [];
 
-        for(let idx = 0; idx < posts.length; idx++){
-            let user = await User.findOne({ _id: posts[idx]['writer'] }, {_id:0, name:1, level:1});
-            let level = user['level'];
-            let name = user['name'];
-            result.push(posts[idx]['_doc']);
-            result[idx]['level'] = level;
-            result[idx]['name'] = name;
+        if(posts !== null) {
+            for(let idx = 0; idx < posts.length; idx++){
+                let user = await User.findOne({ _id: posts[idx]['writer'] }, {_id:0, name:1, level:1});
+                let level = user['level'];
+                let name = user['name'];
+                result.push(posts[idx]['_doc']);
+                result[idx]['level'] = level;
+                result[idx]['name'] = name;
+            }
         }
 
         res.json({ list: result });
@@ -126,28 +130,32 @@ router.get("/detail/:count", async (req, res) => {
         const _count = req.params.count;
         const post = await Post.findOne({ count: _count });
         console.log(post);
-
-        let user = await User.findOne({ _id: post['writer'] });
-        let level = user['level'];
-        let name = user['name'];
-        post['_doc']['level'] = level;
-        post['_doc']['name'] = name;
-        
-        await Post.updateOne(
-            { "_id": post['_id'] }, 
-            { '$inc': { 'views': 1}
-        })
-
-        const replies = await Reply.find({ postID: post['_id'] });
         let result = [];
 
-        for(let idx = 0; idx < replies.length; idx++){
-            let user = await User.findOne({ _id: replies[idx]['writer'] }, {_id:0, name:1, level:1});
+        if(post !== null) {
+            let user = await User.findOne({ _id: post['writer'] });
             let level = user['level'];
             let name = user['name'];
-            result.push(replies[idx]['_doc']);
-            result[idx]['level'] = level;
-            result[idx]['name'] = name;
+            post['_doc']['level'] = level;
+            post['_doc']['name'] = name;
+            
+            await Post.updateOne(
+                { "_id": post['_id'] }, 
+                { '$inc': { 'views': 1}
+            })
+
+            const replies = await Reply.find({ postID: post['_id'] });
+            
+            if(replies !== null) {
+                for(let idx = 0; idx < replies.length; idx++){
+                    let user = await User.findOne({ _id: replies[idx]['writer'] }, {_id:0, name:1, level:1});
+                    let level = user['level'];
+                    let name = user['name'];
+                    result.push(replies[idx]['_doc']);
+                    result[idx]['level'] = level;
+                    result[idx]['name'] = name;
+                }
+            }
         }
 
         res.json({ post, replies: result });
