@@ -15,16 +15,15 @@ const flash = require('express-flash');
 //
 require('dotenv').config();
 
-//const cors = require("cors");
+const cors = require("cors");
 
-/*
 const corsOptions = {
-  origin: true,
+  origin:  'http://localhost:3000',
   credentials: true
 };
 
 app.use(cors(corsOptions));
-*/
+
 
 
 //mongodb 연결
