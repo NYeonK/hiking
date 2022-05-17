@@ -45,7 +45,7 @@ router.post('/textQuery', async (req, res) => {
 
 // Event Query Route
 // 이벤트쿼리 - /api/dialogflow/eventQuery
-/* 
+
 router.post('/eventQuery', async (req, res) => {
     const request = {
         session: sessionPath,
@@ -66,10 +66,6 @@ router.post('/eventQuery', async (req, res) => {
     res.send(result)
 })
 
-
-
-
-*/
 
 
 module.exports = router;
