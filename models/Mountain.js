@@ -12,6 +12,10 @@ const mountainSchema = new Schema(
             type:String,
             required:true
         },
+        image: {
+            type: String,
+            default: "https://www.ui4u.go.kr/tour/img/content/img_mountain_pic02.png"
+        },
         avgRating:{
             type:Number
         },
