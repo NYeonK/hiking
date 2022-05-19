@@ -60,7 +60,7 @@ router.post('/findPassword', (req, res) => {
 */
 
 
-// 비밀번호 찾기 - /api/users/findPassword
+// 비밀번호 찾기 - /api/users/forgot
 router.get('/forgot', function(req, res) {
   /*
   res.render('forgot', {
@@ -76,11 +76,13 @@ router.get('/forgot', function(req, res) {
     return res.json({
       user: req.user,
       success: true,
+      
     })
   })
 });
 
 
+// 비밀번호 찾기 - /api/users/forgot
 router.post('/forgot', function(req, res, next) {
   async.waterfall([
     function(done) {
@@ -132,7 +134,7 @@ router.post('/forgot', function(req, res, next) {
 });
 
 
-// 새로운 비밀번호로 변경 - /api/users/findPassword
+// 새로운 비밀번호로 변경 - /api/users/reset/:token
 router.get('/reset/:token', function(req, res) {
   User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
     if (!user) {
@@ -142,12 +144,15 @@ router.get('/reset/:token', function(req, res) {
     //res.render('reset', {
     //  user: req.user
     //});
+    console.log(user)
+
     res.status(200).send({
       user: req.user
     });
   });
 });
 
+// 새로운 비밀번호로 변경 - /api/users/reset/:token
 router.post('/reset/:token', function(req, res) {
   async.waterfall([
     function(done) {

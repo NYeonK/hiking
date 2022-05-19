@@ -22,12 +22,12 @@ router.post('/register', (req, res) => {
 
   //회원 가입 할 때 필요한 정보들을 client에서 가져오면 DB에 넣어줌.
     const user = new User(req.body)
-    console.log(req.body)
+    // console.log(req.body)
 
     user.save((err, userInfo) => {
       if (err) return res.json({ success: false, err })
       console.log(userInfo)
-      console.log(err)
+      // console.log(err)
 
       return res.status(200).json({
         success: true
