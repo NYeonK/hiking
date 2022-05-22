@@ -119,8 +119,8 @@ router.post('/forgot', function(req, res, next) {
         from: process.env.NML_PASSWORD,
         subject: '[燈山(등산)] 비밀번호 변경 확인 메일',
         text: '안녕하세요, ' + user.name +'님!\n\n아래 링크를 클릭하여 새로운 비밀번호를 설정할 수 있습니다.\n\n'+
-          'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-          '만약 燈山(등산)에서 비밀번호 요청을 하신적이 없다면 이 이메일을 무시하셔도 됩니다.\n\n링크를 클릭하여 새로운 비밀번호를 설정하기 전까지는 비밀번호가 변경되지 않습니다.\n\n감사합니다.\n'
+        'https://venerable-salamander-572270.netlify.app/passwordnext/' + token + '\n\n' +
+        '만약 燈山(등산)에서 비밀번호 요청을 하신적이 없다면 이 이메일을 무시하셔도 됩니다.\n\n링크를 클릭하여 새로운 비밀번호를 설정하기 전까지는 비밀번호가 변경되지 않습니다.\n\n감사합니다.\n'
       };
       transport.sendMail(mailOptions, function(err) {
         req.flash('info', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
@@ -194,7 +194,8 @@ router.post('/reset/:token', function(req, res) {
       });
     }
   ], function(err) {
-    res.redirect('forgot');
+    res.send({ err: err });
+    //return res.redirect('forgot');
   });
 });
 
