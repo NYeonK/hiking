@@ -15,6 +15,9 @@ const flash = require('express-flash');
 //
 require('dotenv').config();
 
+//chat-bot
+//const config = require("./")
+
 const cors = require("cors");
 
 const corsOptions = {
@@ -28,6 +31,7 @@ app.use(cors(corsOptions));
 
 //mongodb 연결
 const mongoose = require('mongoose')
+
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
