@@ -41,31 +41,30 @@ router.post('/textQuery', async (req, res) => {
     res.send(result)
 })
 
-// 
-// 
-// // Event Query Route
-// // 이벤트쿼리 - /api/dialogflow/eventQuery
-// 
-// router.post('/eventQuery', async (req, res) => {
-//     const request = {
-//         session: sessionPath,
-//         queryInput: {
-//             event: {
-//                 name: req.body.event,
-//                 languageCode: languageCode,
-//             },
-//         },
-//     };
-// 
-//     const responses = await sessionClient.detectIntent(request);
-//     console.log('Detected intent');
-//     const result = responses[0].queryResult;
-//     console.log(`  Query: ${result.queryText}`);
-//     console.log(`  Response: ${result.fulfillmentText}`);
-// 
-//     res.send(result)
-// })
-// 
-// 
+
+
+// Event Query Route
+// 이벤트쿼리 - /api/dialogflow/eventQuery
+
+router.post('/eventQuery', async (req, res) => {
+    const request = {
+        session: sessionPath,
+        queryInput: {
+            event: {
+                name: req.body.event,
+                languageCode: languageCode,
+            },
+        },
+    };
+
+    const responses = await sessionClient.detectIntent(request);
+    console.log('Detected intent');
+    const result = responses[0].queryResult;
+    console.log(`Query: ${result.queryText}`);
+    console.log(`Response: ${result.fulfillmentText}`);
+
+    res.send(result)
+})
+
 
 module.exports = router;
