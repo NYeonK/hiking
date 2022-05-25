@@ -126,11 +126,20 @@ router.post('/forgot', function(req, res, next) {
         req.flash('info', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
         done(err, 'done');
       });
+      return res.json({
+        name : req.body.name,
+        email : req.body.email,
+        resetPasswordToken : user.resetPasswordToken,
+        resetPasswordExpires : user.resetPasswordExpires,
+        success: true,
+      });
     }
   ], function(err) {
     if (err) return next(err);
     return res.redirect('forgot');
+    
   });
+
 });
 
 
@@ -191,6 +200,10 @@ router.post('/reset/:token', function(req, res) {
       transport.sendMail(mailOptions, function(err) {
         req.flash('success', 'Success! Your password has been changed.');
         done(err);
+      });
+      return res.json({
+        user: req.user,
+        success: true,
       });
     }
   ], function(err) {
