@@ -73,6 +73,19 @@ router.post("/update", (req, res) => {
     
 });
 
+//회원 탈퇴 - /api/mypage/delete
+router.post("/delete", async (req, res) => {
+    try {
+        await User.remove({
+            _id: req.body._id
+        });
+        
+        res.json({ message: true });
+    } catch (err) {
+        console.log(err);
+        res.json({ message: false });
+    }
+});
 
 
 module.exports = router;

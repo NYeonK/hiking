@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const sequence = require('./Sequence');
+const Reply = require('./Reply');
 
 const { Schema } = mongoose;
 const {
@@ -53,6 +54,19 @@ postSchema.pre("save", function (next) {
             next();
         }
     })
-})
+});
+
+//글 삭제 시 댓글 지우기
+postSchema.pre("deleteOne", async function (next) {
+    let doc = this._conditions._id;
+    //console.log(doc);
+    try {
+        await Reply.deleteMany({ "postID": doc });
+        next();
+    } catch (err) {
+        console.log(err);
+        next();
+    }
+});
 
 module.exports = mongoose.model('Post', postSchema);
