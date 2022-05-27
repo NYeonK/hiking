@@ -216,8 +216,20 @@ router.post("/update", async (req, res) => {
 //내가 쓴 후기
 router.post("/history", async (req, res) => {
     try {
-        const review = await Review.find({ writer: req.body.writer }, null, {sort: {createdAt: -1}});
-        res.json({ list: review });
+        const reviews = await Review.find({ writer: req.body.writer }, null, {sort: {createdAt: -1}});
+        let result = [];
+
+        if(reviews !== null) {
+            for(let idx = 0; idx < reviews.length; idx++){
+                let mountain = await Mountain.findOne({ _id: reviews[idx]['mountain'] }, {_id:0, name:1});
+                let name = mountain['name'];
+                result.push(reviews[idx]['_doc']);
+                result[idx]['mountain_name'] = name;
+                console.log(result[idx]);
+            }    
+        }
+        
+        res.json({ list: result });
     } catch (err) {
         console.log(err);
         res.json({ message: false });
