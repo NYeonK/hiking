@@ -79,34 +79,33 @@ router.post("/update", (req, res) => {
 router.post("/delete", async (req, res) => {
     try {
 
-        // //작성 글 삭제
-        // // await Post.deleteMany({
-        // //     writer: req.body._id
-        // // })
-        // const p = await Post.find({
-        //     writer: req.body._id
-        // })
-        // for(let i = 0; i < p.length; i++) {
-        //     const doc = await Post.findOne({ _id: p[i]._id });
-        //     await Post.deleteOne();
-        // }
-        // // //작성 댓글 삭제
-        // // await Reply.deleteMany({
-        // //     writer: req.body._id
-        // // })
-        // //작성한 후기 삭제
-        // const r = await Review.find({
-        //     writer: req.body._id
-        // })
-        // for(let i = 0; i < r.length; i++) {
-        //     const doc = await Review.findOne({ _id: r[i]._id });
-        //     await Review.deleteOne();
-        // }
+        //작성 글 삭제
+        const p = await Post.find({
+            writer: req.body._id
+        })
+        for(let i = 0; i < p.length; i++) {
+            const post = await Post.findOne({ _id: p[i]._id });
+            await post.deleteOne();
+        }
 
-        // // await User.remove({
-        // //     _id: req.body._id
-        // // });
-        
+        //작성 댓글 삭제
+        await Reply.deleteMany({
+            writer: req.body._id
+        })
+
+        //작성한 후기 삭제
+        const r = await Review.find({
+            writer: req.body._id
+        })
+        for(let i = 0; i < r.length; i++) {
+            const doc = await Review.findOne({ _id: r[i]._id });
+            await doc.deleteOne();
+        }
+
+        //사용자 삭제
+        await User.remove({
+            _id: req.body._id
+        });
         
         res.json({ message: true });
     } catch (err) {

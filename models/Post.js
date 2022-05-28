@@ -58,7 +58,7 @@ postSchema.pre("save", function (next) {
 
 //글 삭제 시 댓글 지우기
 postSchema.pre("deleteOne", { document: true }, async function (next) {
-    //console.log(doc);
+    console.log(this);
     try {
         await Reply.deleteMany({ "postID": this._id });
         next();

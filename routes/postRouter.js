@@ -23,11 +23,11 @@ const upload = multer({
 //게시글 삭제 - /api/post/delete
 router.post("/delete", async (req, res) => {
     try {
-        const doc = await Post.deleteOne({
+        const post = await Post.findOne({
             _id: req.body._id
         });           
-        await doc.deleteOne();
-        
+        await post.deleteOne();
+
         res.json({ message: true });
     } catch (err) {
         console.log(err);
