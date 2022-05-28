@@ -103,7 +103,7 @@ router.post("/delete", async (req, res) => {
         }
 
         //사용자 삭제
-        await User.remove({
+        await User.deleteOne({
             _id: req.body._id
         });
         
