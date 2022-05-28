@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const Review = require("../models/Review");
+const Post = require("../models/Post");
+const Reply = require("../models/Reply");
 const Mountain = require("../models/Mountain");
 
 const bodyParser = require('body-parser');
@@ -76,9 +78,35 @@ router.post("/update", (req, res) => {
 //회원 탈퇴 - /api/mypage/delete
 router.post("/delete", async (req, res) => {
     try {
-        await User.remove({
-            _id: req.body._id
-        });
+
+        // //작성 글 삭제
+        // // await Post.deleteMany({
+        // //     writer: req.body._id
+        // // })
+        // const p = await Post.find({
+        //     writer: req.body._id
+        // })
+        // for(let i = 0; i < p.length; i++) {
+        //     const doc = await Post.findOne({ _id: p[i]._id });
+        //     await Post.deleteOne();
+        // }
+        // // //작성 댓글 삭제
+        // // await Reply.deleteMany({
+        // //     writer: req.body._id
+        // // })
+        // //작성한 후기 삭제
+        // const r = await Review.find({
+        //     writer: req.body._id
+        // })
+        // for(let i = 0; i < r.length; i++) {
+        //     const doc = await Review.findOne({ _id: r[i]._id });
+        //     await Review.deleteOne();
+        // }
+
+        // // await User.remove({
+        // //     _id: req.body._id
+        // // });
+        
         
         res.json({ message: true });
     } catch (err) {

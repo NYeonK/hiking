@@ -57,11 +57,10 @@ postSchema.pre("save", function (next) {
 });
 
 //글 삭제 시 댓글 지우기
-postSchema.pre("deleteOne", async function (next) {
-    let doc = this._conditions._id;
+postSchema.pre("deleteOne", { document: true }, async function (next) {
     //console.log(doc);
     try {
-        await Reply.deleteMany({ "postID": doc });
+        await Reply.deleteMany({ "postID": this._id });
         next();
     } catch (err) {
         console.log(err);
