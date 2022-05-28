@@ -7,22 +7,28 @@ const User = require("../models/User");
 
 router.use(bodyParser.json());
 
+const getLevel = (n) => {
+    let level = 1;
+    if(n < 4) level = 2;
+    else if(n < 7) level = 3;
+    else if(n < 10) level = 4;
+    else if(n < 15) level = 5;
+    else if(n < 20) level = 6;
+    else if(n < 25) level = 7;
+    else if(n < 32) level = 8;
+    else if(n < 39) level = 9;
+    else if(39 <= n) level = 10;
+    return level;
+}
+
 //후기 삭제 - /api/review/delete
 router.post("/delete", async (req, res) => {
     try {
         //레벨 확인
         let u = await User.findOne({ _id: req.body.writer }, { _id: 0, review: 1 });
         let n = u['review'] - 1;
-        let level = 1;
-        if(n < 4) level = 2;
-        else if(n < 7) level = 3;
-        else if(n < 10) level = 4;
-        else if(n < 15) level = 5;
-        else if(n < 20) level = 6;
-        else if(n < 25) level = 7;
-        else if(n < 32) level = 8;
-        else if(n < 39) level = 9;
-        else if(39 <= n) level = 10;
+        let level = getLevel(n);
+
         await User.updateOne(
             { "_id": req.body.writer },
             { $set: {
@@ -111,16 +117,7 @@ router.post('/write', async (req, res) => {
         //레벨 확인
         let u = await User.findOne({ _id: req.body.writer }, { _id: 0, review: 1 });
         let n = u['review'] + 1;
-        let level = 1;
-        if(n < 4) level = 2;
-        else if(n < 7) level = 3;
-        else if(n < 10) level = 4;
-        else if(n < 15) level = 5;
-        else if(n < 20) level = 6;
-        else if(n < 25) level = 7;
-        else if(n < 32) level = 8;
-        else if(n < 39) level = 9;
-        else if(39 <= n) level = 10;
+        let level = getLevel(n);
         await User.updateOne(
             { "_id": req.body.writer },
             { $set: {
