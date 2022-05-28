@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Reply = require("../models/Reply");
+const Post = require("../models/Post");
 const bodyParser = require('body-parser');
 
 router.use(bodyParser.json());
@@ -58,7 +59,19 @@ router.post("/update", async (req, res) => {
 router.post("/history", async (req, res) => {
     try {
         const reply = await Reply.find({ writer: req.body.writer }, null, {sort: {createdAt: -1}});
-        res.json({ list: reply });
+        let result = [];
+
+        if(reply !== null) {
+            for(let idx = 0; idx < reply.length; idx++){
+                let post = await Post.findOne({ _id: reply[idx]['postID'] }, {_id:0, count:1});
+                let count = post['count'];
+                result.push(reply[idx]['_doc']);
+                result[idx]['post_count'] = count;
+                console.log(result[idx]);
+            }    
+        }
+        
+        res.json({ list: result });
     } catch (err) {
         console.log(err);
         res.json({ message: false });
