@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const passport = require('passport');
 
 require('dotenv').config();
 
@@ -23,7 +24,8 @@ mongoose.connect(process.env.MONGODB_URI, {
 }).then(() => console.log('MongoDB Connected...'))
   .catch(err => console.log(err))
 
-
+app.use(passport.initialize());
+app.use(passport.session());
   
 // Routes
 app.listen(8080, function(){
