@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 //
 const path = require('path');
-//const favicon = require('static-favicon');
 const session = require('express-session')
 const passport = require('passport');
 const flash = require('express-flash');
@@ -11,12 +10,7 @@ require('dotenv').config();
 
 const cors = require("cors");
 
-const corsOptions = {
-  origin:  'http://localhost:3000',
-  credentials: true
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 
 
 
