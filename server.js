@@ -1,6 +1,11 @@
 const express = require('express');
 const app = express();
+//
+const path = require('path');
+//const favicon = require('static-favicon');
+const session = require('express-session')
 const passport = require('passport');
+const flash = require('express-flash');
 
 require('dotenv').config();
 
@@ -24,9 +29,13 @@ mongoose.connect(process.env.MONGODB_URI, {
 }).then(() => console.log('MongoDB Connected...'))
   .catch(err => console.log(err))
 
+// Middleware
+
+app.use(session({ secret: 'session secret key' }));
 app.use(passport.initialize());
 app.use(passport.session());
-  
+app.use(flash());
+
 // Routes
 app.listen(8080, function(){
   console.log('listening on 8080')
