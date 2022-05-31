@@ -65,7 +65,7 @@ router.post('/write', async (req, res) => {
                 avgRating: req.body.rating,
                 facility: fac,
                 count: 1,
-                hashtags: req.body.hashtag.split(" "),
+                hashtags: req.body.hashtags.split(" "),
                 latitude: req.body.lat,
                 longitude: req.body.lng
             }
@@ -77,7 +77,7 @@ router.post('/write', async (req, res) => {
             let a_rate = m['avgRating'];
             let count = m['count'];
             let fac = m['facility'];
-            let hashtag = m['hashtags'].concat(req.body.hashtag.split(" "));
+            let hashtag = m['hashtags'].concat(req.body.hashtags.split(" "));
             const set = new Set(hashtag);
             const set_hashtag = [...set];
             let new_rate = ((a_rate * count) + req.body.rating) / (count + 1);
@@ -113,7 +113,7 @@ router.post('/write', async (req, res) => {
             facility: req.body.facility,
             rating: req.body.rating,
             comment: req.body.comment,
-            hashtags: req.body.hashtag.split(" "),
+            hashtags: req.body.hashtags.split(" "),
             visited: _visited
         };
 
