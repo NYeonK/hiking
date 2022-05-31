@@ -53,8 +53,6 @@ router.post('/write', async (req, res) => {
     try {        
         const m = await Mountain.findOne({ name: req.body.mountain });
         let m_id;
-        console.log(m);
-        
         if(m === null) { //산이 등록 돼 있지 않으므로 산 등록
             let fac = [];
             for(let i = 0; i < 5; i++) {
@@ -67,7 +65,7 @@ router.post('/write', async (req, res) => {
                 avgRating: req.body.rating,
                 facility: fac,
                 count: 1,
-                hashtags: req.body.toString().split(",").map((word) => `#${word}`),
+                hashtags: req.body.hashtag.split(" "),
                 latitude: req.body.lat,
                 longitude: req.body.lng
             }
@@ -79,6 +77,9 @@ router.post('/write', async (req, res) => {
             let a_rate = m['avgRating'];
             let count = m['count'];
             let fac = m['facility'];
+            let hashtag = m['hashtags'].concat(req.body.hashtag.split(" "));
+            const set = new Set(hashtag);
+            const set_hashtag = [...set];
             let new_rate = ((a_rate * count) + req.body.rating) / (count + 1);
             for(let i = 0; i < 5; i++) {
                 if(req.body.facility[i]) fac[i].t += 1;
@@ -88,7 +89,7 @@ router.post('/write', async (req, res) => {
             await Mountain.updateOne(
                 { "_id": m_id }, 
                 { "$inc": { "count": 1 }, 
-                    $set: { "avgRating": new_rate, "facility": fac } }
+                    $set: { "avgRating": new_rate, "facility": fac, "hashtags": set_hashtag } }
             )
         }
         
@@ -112,7 +113,7 @@ router.post('/write', async (req, res) => {
             facility: req.body.facility,
             rating: req.body.rating,
             comment: req.body.comment,
-            hashtags: req.body.toString().split(",").map((word) => `#${word}`),
+            hashtags: req.body.hashtag.split(" "),
             visited: _visited
         };
 
