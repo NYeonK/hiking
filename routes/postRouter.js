@@ -144,10 +144,10 @@ router.get("/detail/:count", async (req, res) => {
             post['_doc']['level'] = level;
             post['_doc']['name'] = name;
             
-            await Post.updateOne(
-                { "_id": post['_id'] }, 
-                { '$inc': { 'views': 1}
-            })
+            // await Post.updateOne(
+            //     { "_id": post['_id'] }, 
+            //     { '$inc': { 'views': 1}
+            // })
 
             const replies = await Reply.find({ postID: post['_id'] });
             
