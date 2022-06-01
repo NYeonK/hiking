@@ -197,6 +197,8 @@ router.post("/history", async (req, res) => {
 
         if(reviews !== null) {
             for(let idx = 0; idx < reviews.length; idx++){
+                reviews[idx]['createdAt'].setHours(reviews[idx]['createdAt'].getHours() + 9);
+                reviews[idx]['updatedAt'].setHours(reviews[idx]['updatedAt'].getHours() + 9);
                 let mountain = await Mountain.findOne({ _id: reviews[idx]['mountain'] }, {_id:0, name:1});
                 let name = mountain['name'];
                 result.push(reviews[idx]['_doc']);

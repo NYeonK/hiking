@@ -17,6 +17,8 @@ router.get("/:mountain", async (req, res) => {
             const reviews = await Review.find({ mountain: m['_id']});
 
             for(let idx = 0; idx < reviews.length; idx++){
+                reviews[idx]['createdAt'].setHours(reviews[idx]['createdAt'].getHours() + 9);
+                reviews[idx]['updatedAt'].setHours(reviews[idx]['updatedAt'].getHours() + 9);
                 let user = await User.findOne({ _id: reviews[idx]['writer'] }, {_id:0, name:1, level:1, image:1});
                 let level = user['level'];
                 let name = user['name'];

@@ -80,13 +80,15 @@ router.get("/main", async (req, res) => {
 
         if(posts !== null) {
             for(let idx = 0; idx < posts.length; idx++){
+                posts[idx]['createdAt'].setHours(posts[idx]['createdAt'].getHours() + 9);
+                posts[idx]['updatedAt'].setHours(posts[idx]['updatedAt'].getHours() + 9);
                 let user = await User.findOne({ _id: posts[idx]['writer'] }, {_id:0, name:1, level:1});
                 let level = user['level'];
                 let name = user['name'];
                 result.push(posts[idx]['_doc']);
+                console.log(result[idx]['createdAt']);
                 result[idx]['level'] = level;
                 result[idx]['name'] = name;
-                console.log(result[idx]);
             }    
         }
         
@@ -107,6 +109,8 @@ router.get("/main/:search", async (req, res) => {
 
         if(posts !== null) {
             for(let idx = 0; idx < posts.length; idx++){
+                posts[idx]['createdAt'].setHours(posts[idx]['createdAt'].getHours() + 9);
+                posts[idx]['updatedAt'].setHours(posts[idx]['updatedAt'].getHours() + 9);
                 let user = await User.findOne({ _id: posts[idx]['writer'] }, {_id:0, name:1, level:1});
                 let level = user['level'];
                 let name = user['name'];
@@ -132,6 +136,8 @@ router.get("/detail/:count", async (req, res) => {
         let result = [];
 
         if(post !== null) {
+            post['createdAt'].setHours(post['createdAt'].getHours() + 9);
+            post['updatedAt'].setHours(post['updatedAt'].getHours() + 9);
             let user = await User.findOne({ _id: post['writer'] });
             let level = user['level'];
             let name = user['name'];
@@ -147,6 +153,8 @@ router.get("/detail/:count", async (req, res) => {
             
             if(replies !== null) {
                 for(let idx = 0; idx < replies.length; idx++){
+                    replies[idx]['createdAt'].setHours(replies[idx]['createdAt'].getHours() + 9);
+                    replies[idx]['updatedAt'].setHours(replies[idx]['updatedAt'].getHours() + 9);
                     let user = await User.findOne({ _id: replies[idx]['writer'] }, {_id:0, name:1, level:1});
                     let level = user['level'];
                     let name = user['name'];
@@ -168,6 +176,13 @@ router.get("/detail/:count", async (req, res) => {
 router.post("/history", async (req, res) => {
     try {
         const post = await Post.find({ writer: req.body.writer }, null, {sort: {createdAt: -1}});
+
+        if(post !== null) {
+            for(let idx = 0; idx < post.length; idx++){
+                post[idx]['createdAt'].setHours(post[idx]['createdAt'].getHours() + 9);
+                post[idx]['updatedAt'].setHours(post[idx]['updatedAt'].getHours() + 9);
+            }
+        }
         res.json({ list: post });
     } catch (err) {
         console.log(err);

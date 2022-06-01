@@ -63,6 +63,8 @@ router.post("/history", async (req, res) => {
 
         if(reply !== null) {
             for(let idx = 0; idx < reply.length; idx++){
+                reply[idx]['createdAt'].setHours(reply[idx]['createdAt'].getHours() + 9);
+                reply[idx]['updatedAt'].setHours(reply[idx]['updatedAt'].getHours() + 9);
                 let post = await Post.findOne({ _id: reply[idx]['postID'] }, {_id:0, count:1});
                 let count = post['count'];
                 result.push(reply[idx]['_doc']);
